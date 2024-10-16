@@ -19,8 +19,11 @@ const getTemplate = async (type, payload) => {
       let link = `${process.env.VERIFY_LINK}?token=${token}`;
       return `
             <h1>Welcome to Galvin Music</h1>
-            <p>We got your back, Please verify your account to get started with adfree music experience.</p>
-            <a href="${link}">Verify Email</a>
+            <p>Thanks for registering with Galvin music, Please use below button to Verify you email. </p>
+            <a style="color: black; background-color: #4CB050; padding: 10px 20px; text-decoration: none; font-weight: 700; border-radius: 7px; display: inline-block;" href="${link}">Verify Email</a>
+
+            <p>Happy Entertainment</p>
+            <p>Galvin Music Company</p>
             `;
       break;
 
@@ -36,7 +39,7 @@ const sendEmail = async (type, payload) => {
     const info = await transporter.sendMail({
       from: '"Galvin music" <thegalvin00@gmail.com>', // sender address
       to: payload.email, // list of receivers
-      subject: "Hello", // Subject line
+      subject: "Welcome to Galvin Music", // Subject line
       text: "", // plain text body
       html: template, // html body
     });
