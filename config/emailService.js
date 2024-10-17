@@ -26,6 +26,18 @@ const getTemplate = async (type, payload) => {
             <p>Galvin Music Company</p>
             `;
       break;
+    case "resend_verify":
+      let resend_verify_token = await getToken(payload);
+      let resend_verify_link = `${process.env.VERIFY_LINK}?token=${resend_verify_token}`;
+      return `
+            <h1>Welcome Again to Galvin Music!!!</h1>
+            <p>Thanks for registering with Galvin music, Please use below button to Verify you email. </p>
+            <a style="color: black; background-color: #4CB050; padding: 10px 20px; text-decoration: none; font-weight: 700; border-radius: 7px; display: inline-block;" href="${resend_verify_link}">Verify Email</a>
+
+            <p>Happy Entertainment</p>
+            <p>Galvin Music Company</p>
+            `;
+      break;
 
     default:
       break;

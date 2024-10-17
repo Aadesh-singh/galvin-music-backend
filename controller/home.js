@@ -1,6 +1,6 @@
 const indexRoute = (req, res) => {
   return res.status(200).json({
-    msg: "Servier is running",
+    message: "Servier is running",
   });
 };
 
