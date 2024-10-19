@@ -7,6 +7,7 @@ const {
 } = require("../middleware/auth");
 const User = require("../model/user");
 const bcrypt = require("bcryptjs");
+const { verifyGoogleToken } = require("../utils/googleAuth");
 
 const register = async (req, res) => {
   try {
@@ -144,9 +145,69 @@ const sendVerificationEmail = async (req, res) => {
   }
 };
 
+const googleLogin = async (req, res) => {
+  console.log("req.body: ", req.body);
+  const { userDetails } = req.body;
+  const payload = userDetails;
+
+  try {
+    // const { email, payload } = await verifyGoogleToken(token);
+    const { email } = payload;
+    console.log("email: ", email, payload);
+    // Find or create the user in your database
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      console.log("user not available");
+      // user doesnot exist create a user
+      const userObj = {
+        firstName: payload.given_name,
+        lastName: payload.family_name,
+        email: email.toLowerCase(),
+        emailVerified: true,
+        profileUrl: payload.picture,
+        password: "",
+        phoneNumber: "-1",
+        accountType: "google",
+      };
+      const user = await User.create(userObj);
+      const payload_jwt = {
+        id: user._id,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+      };
+      const token = await getToken(payload_jwt);
+      const send = await sendEmail("register_with_google", payload_jwt);
+      console.log("Email sent successfully:", send);
+
+      return res
+        .status(200)
+        .json({ message: "User logged in successfully", token, user });
+    } else if (!user.emailVerified) {
+      console.log("email not verified");
+      return res
+        .status(401)
+        .json({ code: "EMAIL_NOT_VERIFIED", message: "Email not verified" });
+    } else {
+      const payload = {
+        id: user._id,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+      };
+      const token = await getToken(payload);
+      return res
+        .status(200)
+        .json({ message: "User logged in successfully", token: token, user });
+    }
+  } catch (error) {
+    console.log("error in google login: ", error);
+    res.status(401).json({ message: "Google login failed" });
+  }
+};
+
 module.exports = {
   register,
   login,
   verifyemail,
   sendVerificationEmail,
+  googleLogin,
 };

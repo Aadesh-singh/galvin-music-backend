@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
+      // required: true,
     },
     banned: {
       type: Boolean,
@@ -34,6 +34,13 @@ const userSchema = new mongoose.Schema(
     isActive: {
       type: Boolean,
       default: true,
+    },
+    profileUrl: {
+      type: String,
+    },
+    accountType: {
+      type: String,
+      default: "default",
     },
   },
   {

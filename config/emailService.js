@@ -38,6 +38,21 @@ const getTemplate = async (type, payload) => {
             <p>Galvin Music Company</p>
             `;
       break;
+    case "register_with_google":
+      let register_with_google_token = await getToken(payload);
+      let register_with_google_link = `${
+        process.env.FRONTEND_BASE_URL
+      }/check-token-type?type=${"googleRegister"}&token=${register_with_google_token}`;
+      return `
+            <h1>Welcome to Galvin Music!!!</h1>
+            <p>Thanks for registering with Galvin music, Please use below button to Verify you email. </p>
+            <p>Please have a moment and create a password using below button, which is valid for 1h from now.</p>
+            <a style="color: black; background-color: #4CB050; padding: 10px 20px; text-decoration: none; font-weight: 700; border-radius: 7px; display: inline-block;" href="${register_with_google_link}">Verify Email</a>
+
+            <p>Happy Entertainment</p>
+            <p>Galvin Music Company</p>
+            `;
+      break;
 
     default:
       break;
