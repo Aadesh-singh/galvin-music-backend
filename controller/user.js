@@ -204,10 +204,77 @@ const googleLogin = async (req, res) => {
   }
 };
 
+const sendForgotPasswordLink = async (req, res) => {
+  try {
+    const { email } = req.query;
+    console.log(email);
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      return res.status(401).json({
+        message: "Invalid username password combination.",
+        code: "INCR_USER_OR_PASSWORD",
+      });
+    } else {
+      const payload = {
+        id: user._id,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+      };
+      const send = await sendEmail("passwordReset", payload);
+      console.log("Email sent successfully:", send);
+      return res.status(200).json({
+        code: "EMAIL_SENT",
+        message: "Email Sent Successfully",
+      });
+    }
+  } catch (error) {
+    console.log("Error in sending verification email", err);
+    return res.status(401).json({
+      code: "SERVER_ERR",
+      message: "Error in sending verification email.",
+    });
+  }
+};
+
+const updatePassword = async (req, res) => {
+  try {
+    console.log("body: ", req.body);
+    const { token, newPassword } = req.body;
+    const verified = await checkToken(token);
+    console.log("verified token: ", verified);
+    if (verified.id) {
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+      const user = await User.findByIdAndUpdate(
+        verified.id,
+        { password: hashedPassword },
+        { new: true }
+      );
+      console.log("password update success");
+      return res.status(200).json({
+        message: "Password Updated successfully",
+      });
+    } else {
+      return res.status(403).json({
+        message: "Token Expired",
+        code: "TOKEN_EXPIRED",
+      });
+    }
+  } catch (error) {
+    console.log("Error in updating password", error);
+    return res.status(500).json({
+      code: "SERVER_ERR",
+      message: "Error in updating password",
+    });
+  }
+};
+
 module.exports = {
   register,
   login,
   verifyemail,
   sendVerificationEmail,
   googleLogin,
+  sendForgotPasswordLink,
+  updatePassword,
 };
