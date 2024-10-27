@@ -3,6 +3,7 @@ const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3"); // Import 
 const { Upload } = require("@aws-sdk/lib-storage"); // For streaming uploads
 const fs = require("fs");
 const path = require("path");
+const Song = require("../model/song");
 
 // AWS S3 v3 configuration (use S3Client)
 const s3Client = new S3Client({
@@ -21,8 +22,17 @@ const uploadSong = async (req, res) => {
   // Read the uploaded file
   const filePath = req.file.path; // Path to the uploaded song
   try {
-    const body = req.body;
-    // 2. Sanitize the form inputs- pending
+    console.log("req.bodt: ", req.body);
+    const { name, lyricsby, musicby, singers, lyrics, miscInfo } = req.body;
+    // 2. Sanitize the form inputs
+    const songObj = {
+      name: name.trim(),
+      lyricsby: JSON.parse(lyricsby).map((i) => i.trim()),
+      musicby: JSON.parse(musicby).map((i) => i.trim()),
+      singers: JSON.parse(singers).map((i) => i.trim()),
+      lyrics,
+      miscInfo,
+    };
 
     // Read the file
     const fileStream = fs.createReadStream(filePath);
@@ -48,7 +58,13 @@ const uploadSong = async (req, res) => {
     console.log("s3 Reponse: ", s3Response);
     // 4. Get the public url of song
     console.log("s3 Reponse url: ", s3Response.Location);
+    const songUrl = s3Response.Location;
+    songObj.songUrl = songUrl;
+    songObj.owner = req.user.id;
 
+    console.log("SongObj: ", songObj);
+
+    const song = await Song.create(songObj);
     // 5. Destructure the Song Obj with public/avalilability url
     // 6. Feed to MongoDB
     // 7. Return success response.
