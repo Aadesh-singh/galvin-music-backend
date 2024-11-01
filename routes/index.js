@@ -22,9 +22,9 @@ router.use("/auth", authController);
 router.use("/song", authenticateToken, songController);
 
 //Routes related to Playlists
-route.use("/playlist", playlistController);
+router.use("/playlist", playlistController);
 
 //Routes related to Albums
-route.use("/album", albumController);
+router.use("/album", albumController);
 
 module.exports = router;
