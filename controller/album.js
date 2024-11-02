@@ -11,8 +11,8 @@ const albumTitleExist = async (req, res) => {
     const albums = await Album.find({
       name: { $regex: `^${title}$`, $options: "i" },
     });
-    console.log(albums);
-    console.log(albums.length);
+    console.log(title, albums);
+    console.log(title, albums.length);
     if (albums.length > 0) {
       return res
         .status(200)
@@ -45,6 +45,7 @@ const createAlbum = async (req, res) => {
       name: name,
       hashtags: hashtags,
       description: description,
+      owner: req.user.id,
     });
     return res.status(200).json({ message: "Album created successfully" });
   } catch (error) {
