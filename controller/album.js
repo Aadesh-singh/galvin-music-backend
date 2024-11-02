@@ -11,6 +11,8 @@ const albumTitleExist = async (req, res) => {
     const albums = await Album.find({
       name: { $regex: `^${title}$`, $options: "i" },
     });
+    console.log(albums);
+    console.log(albums.length);
     if (albums.length > 0) {
       return res
         .status(200)
@@ -30,7 +32,21 @@ const albumTitleExist = async (req, res) => {
 
 const createAlbum = async (req, res) => {
   try {
-    return res.status(200).json({ message: "Method not implemented yet" });
+    const { name, hashtags, description } = req.body;
+    const album = await Album.find({ name: name });
+    console.log(album);
+    if (album.length > 0) {
+      return res.status(403).json({
+        code: "Bad payload",
+        message: "Album with same name already exist",
+      });
+    }
+    await Album.create({
+      name: name,
+      hashtags: hashtags,
+      description: description,
+    });
+    return res.status(200).json({ message: "Album created successfully" });
   } catch (error) {
     console.log("Error in creating Album: ", error);
     return res
