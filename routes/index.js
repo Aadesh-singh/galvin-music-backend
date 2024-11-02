@@ -1,9 +1,9 @@
 const express = require("express");
 const { indexRoute, verifyToken } = require("../controller/home");
-const authController = require("./auth");
-const songController = require("./song");
-const playlistController = require("./playlist");
-const albumController = require("./album");
+const authRoutes = require("./auth");
+const songRoutes = require("./song");
+const playlistRoutes = require("./playlist");
+const albumRoutes = require("./album");
 const { authenticateToken } = require("../middleware/auth");
 const router = express.Router();
 
@@ -16,15 +16,15 @@ router.post("/verifyToken", verifyToken);
 // ------------------------------------ Roues other than Home compoment -----------------------------
 
 //Routes related to Authentication
-router.use("/auth", authController);
+router.use("/auth", authRoutes);
 
 //Routes related to Songs
-router.use("/song", authenticateToken, songController);
+router.use("/song", authenticateToken, songRoutes);
 
 //Routes related to Playlists
-router.use("/playlist", playlistController);
+router.use("/playlist", playlistRoutes);
 
 //Routes related to Albums
-router.use("/album", albumController);
+router.use("/album", albumRoutes);
 
 module.exports = router;
