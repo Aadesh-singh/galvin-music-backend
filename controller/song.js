@@ -4,6 +4,8 @@ const { Upload } = require("@aws-sdk/lib-storage"); // For streaming uploads
 const fs = require("fs");
 const path = require("path");
 const Song = require("../model/song");
+const Album = require("../model/Album");
+const Playlist = require("../model/Playlist");
 
 // AWS S3 v3 configuration (use S3Client)
 const s3Client = new S3Client({
@@ -23,7 +25,17 @@ const uploadSong = async (req, res) => {
   const filePath = req.file.path; // Path to the uploaded song
   try {
     console.log("req.bodt: ", req.body);
-    const { name, lyricsby, musicby, singers, lyrics, miscInfo } = req.body;
+    const {
+      name,
+      lyricsby,
+      musicby,
+      singers,
+      lyrics,
+      miscInfo,
+      createUnder,
+      playlist,
+      album,
+    } = req.body;
     // 2. Sanitize the form inputs
     const songObj = {
       name: name.trim(),
@@ -61,10 +73,24 @@ const uploadSong = async (req, res) => {
     const songUrl = s3Response.Location;
     songObj.songUrl = songUrl;
     songObj.owner = req.user.id;
+    if (createUnder == "album") {
+      songObj.albums = [album];
+    } else {
+      songObj.playlists = [playlist];
+    }
 
     console.log("SongObj: ", songObj);
 
     const song = await Song.create(songObj);
+    if (createUnder == "album") {
+      await Album.updateOne({ _id: album }, { $push: { songs: song._id } });
+    } else {
+      await Playlist.updateOne(
+        { _id: playlist },
+        { $push: { songs: song._id } }
+      );
+    }
+
     // 5. Destructure the Song Obj with public/avalilability url
     // 6. Feed to MongoDB
     // 7. Return success response.

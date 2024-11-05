@@ -1,4 +1,5 @@
 const Album = require("../model/Album");
+const User = require("../model/user");
 
 const albumTitleExist = async (req, res) => {
   try {
@@ -32,6 +33,8 @@ const albumTitleExist = async (req, res) => {
 
 const createAlbum = async (req, res) => {
   try {
+    console.log("req.body: ", req.body);
+    console.log("req.user: ", req.user);
     const { name, hashtags, description } = req.body;
     const album = await Album.find({ name: name });
     console.log(album);
@@ -41,12 +44,18 @@ const createAlbum = async (req, res) => {
         message: "Album with same name already exist",
       });
     }
-    await Album.create({
+    const albumCreated = await Album.create({
       name: name,
       hashtags: hashtags,
       description: description,
       owner: req.user.id,
+      users: [req.user.id],
     });
+    console.log("album created: ", albumCreated);
+    await User.updateOne(
+      { _id: req.user.id },
+      { $push: { albums: albumCreated._id } }
+    );
     return res.status(200).json({ message: "Album created successfully" });
   } catch (error) {
     console.log("Error in creating Album: ", error);

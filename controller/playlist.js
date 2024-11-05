@@ -1,4 +1,5 @@
 const Playlist = require("../model/Playlist");
+const User = require("../model/user");
 
 const createPlaylist = async (req, res) => {
   try {
@@ -11,12 +12,19 @@ const createPlaylist = async (req, res) => {
         message: "Playlist with same name already exist",
       });
     }
-    await Playlist.create({
+    const playlistCreated = await Playlist.create({
       name: name,
       hashtags: hashtags,
       description: description,
       owner: req.user.id,
+      users: [req.user.id],
     });
+
+    await User.updateOne(
+      { _id: req.user.id },
+      { $push: { playlists: playlistCreated._id } }
+    );
+
     return res.status(200).json({ message: "Playlist created successfully" });
   } catch (error) {
     console.log("Error in creating Playlist: ", error);
