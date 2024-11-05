@@ -40,8 +40,11 @@ const userSchema = new mongoose.Schema(
     },
     accountType: {
       type: String,
-      default: "default",
+      default: "default", //default for email and password
     },
+    playlists: [{ type: mongoose.Types.ObjectId, ref: "Playlist" }],
+    albums: [{ type: mongoose.Types.ObjectId, ref: "Album" }],
+    favSongs: [{ type: mongoose.Types.ObjectId, ref: "Song" }],
   },
   {
     timestamps: true,

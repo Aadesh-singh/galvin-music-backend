@@ -31,6 +31,8 @@ const songSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    playlists: [{ type: mongoose.Types.ObjectId, ref: "Playlist" }],
+    albums: [{ type: mongoose.Types.ObjectId, ref: "Album" }],
   },
   { timestamps: true }
 );
