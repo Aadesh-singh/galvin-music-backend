@@ -42,6 +42,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "default", //default for email and password
     },
+    profileUrl: { type: String },
     playlists: [{ type: mongoose.Types.ObjectId, ref: "Playlist" }],
     albums: [{ type: mongoose.Types.ObjectId, ref: "Album" }],
     favSongs: [{ type: mongoose.Types.ObjectId, ref: "Song" }],

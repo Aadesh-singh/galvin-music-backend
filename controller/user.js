@@ -1,4 +1,7 @@
 require("dotenv").config();
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3"); // Import S3Client and PutObjectCommand
+const { Upload } = require("@aws-sdk/lib-storage"); // For streaming uploads
+const fs = require("fs");
 const { sendEmail } = require("../config/emailService");
 const {
   getToken,
@@ -8,6 +11,15 @@ const {
 const User = require("../model/user");
 const bcrypt = require("bcryptjs");
 const { verifyGoogleToken } = require("../utils/googleAuth");
+
+// AWS S3 v3 configuration (use S3Client)
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION, // Example: 'us-east-1'
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+});
 
 const register = async (req, res) => {
   try {
@@ -294,11 +306,32 @@ const updateUserData = async (req, res) => {
     if (!firstName || !lastName) {
       return res.status(401).json({ message: "Unauthenticated request" });
     }
-    const user = await User.updateOne(
-      { _id: req.user.id },
-      { firstName, lastName },
-      { new: true }
-    );
+
+    console.log("req.file", req.file);
+    const profileFile = req.file;
+    let userObj = { firstName, lastName };
+    if (profileFile) {
+      const profileUploadParams = {
+        Bucket: "galvinsongs",
+        Key: `profile/profile_${Date.now()}-${profileFile.originalname}`, // Use `cover/` prefix
+        Body: fs.createReadStream(profileFile.path),
+        ContentType: profileFile.mimetype,
+      };
+
+      const profileUpload = new Upload({
+        client: s3Client,
+        params: profileUploadParams,
+      });
+      const profileS3Response = await profileUpload.done();
+      userObj.profileUrl = profileS3Response.Location; // Add cover URL to the song object
+
+      // Clean up: Remove the local cover photo file
+      fs.unlinkSync(profileFile.path);
+    }
+
+    const user = await User.updateOne({ _id: req.user.id }, userObj, {
+      new: true,
+    });
     return res.status(200).json({
       message: "User Updated successfully",
       status: 200,
