@@ -8,6 +8,7 @@ const {
   sendForgotPasswordLink,
   updatePassword,
   fetchUserData,
+  updateUserData,
 } = require("../controller/user");
 const { authenticateToken } = require("../middleware/auth");
 
@@ -21,5 +22,6 @@ router.post("/google-login", googleLogin);
 router.post("/sendForgotPasswordLink", sendForgotPasswordLink);
 router.post("/updatePassword", updatePassword);
 router.get("/fetchUserData", authenticateToken, fetchUserData);
+router.put("/updateUserData", authenticateToken, updateUserData);
 
 module.exports = router;

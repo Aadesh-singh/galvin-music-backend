@@ -288,6 +288,31 @@ const fetchUserData = async (req, res) => {
   }
 };
 
+const updateUserData = async (req, res) => {
+  try {
+    const { firstName, lastName } = req.body;
+    if (!firstName || !lastName) {
+      return res.status(401).json({ message: "Unauthenticated request" });
+    }
+    const user = await User.updateOne(
+      { _id: req.user.id },
+      { firstName, lastName },
+      { new: true }
+    );
+    return res.status(200).json({
+      message: "User Updated successfully",
+      status: 200,
+      user: user,
+    });
+  } catch (error) {
+    console.log("Error in updating user: ", error);
+    return res.status(500).json({
+      message: "Error in updating user",
+      error: error,
+    });
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -297,4 +322,5 @@ module.exports = {
   sendForgotPasswordLink,
   updatePassword,
   fetchUserData,
+  updateUserData,
 };
