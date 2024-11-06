@@ -17,14 +17,18 @@ const s3Client = new S3Client({
 });
 
 const uploadSong = async (req, res) => {
-  if (!req.file) {
+  console.log("req.file: ", req.file);
+  console.log("req.files: ", req.files);
+  if (!req.files) {
     return res.status(400).send("No file uploaded");
   }
   // 1. Get the song from multer
   // Read the uploaded file
-  const filePath = req.file.path; // Path to the uploaded song
+  const songFile = req.files?.song?.[0]; // Path to the uploaded song
+  console.log("req.files: ", req.files);
+  const coverPhotoFile = req.files?.coverPhoto?.[0];
   try {
-    console.log("req.bodt: ", req.body);
+    console.log("req.body: ", req.body);
     const {
       name,
       lyricsby,
@@ -47,15 +51,15 @@ const uploadSong = async (req, res) => {
     };
 
     // Read the file
-    const fileStream = fs.createReadStream(filePath);
+    const fileStream = fs.createReadStream(songFile.path);
 
     // 3. Upload song on AWS S3
     // S3 upload parameters
     const uploadParams = {
       Bucket: "galvinsongs",
-      Key: `song_${Date.now()}-${req.file.originalname}`,
+      Key: `song_${Date.now()}-${songFile.originalname}`,
       Body: fileStream,
-      ContentType: req.file.mimetype,
+      ContentType: songFile.mimetype,
       //   ACL: "public-read",
     };
 
@@ -73,6 +77,27 @@ const uploadSong = async (req, res) => {
     const songUrl = s3Response.Location;
     songObj.songUrl = songUrl;
     songObj.owner = req.user.id;
+
+    // 3. Upload cover photo file to S3 (if available)
+    if (coverPhotoFile) {
+      const coverUploadParams = {
+        Bucket: "galvinsongs",
+        Key: `cover/cover_${Date.now()}-${coverPhotoFile.originalname}`, // Use `cover/` prefix
+        Body: fs.createReadStream(coverPhotoFile.path),
+        ContentType: coverPhotoFile.mimetype,
+      };
+
+      const coverUpload = new Upload({
+        client: s3Client,
+        params: coverUploadParams,
+      });
+      const coverS3Response = await coverUpload.done();
+      songObj.coverPhotoUrl = coverS3Response.Location; // Add cover URL to the song object
+
+      // Clean up: Remove the local cover photo file
+      fs.unlinkSync(coverPhotoFile.path);
+    }
+
     if (createUnder == "album") {
       songObj.albums = [album];
     } else {
@@ -95,7 +120,7 @@ const uploadSong = async (req, res) => {
     // 6. Feed to MongoDB
     // 7. Return success response.
     // Clean up: Remove the local file
-    fs.unlinkSync(filePath);
+    fs.unlinkSync(songFile.path);
     return res.status(200).json({ message: "Song uploaded successfully" });
   } catch (error) {
     console.log("Error in uploading song", error);

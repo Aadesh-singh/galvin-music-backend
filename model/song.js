@@ -26,6 +26,7 @@ const songSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    coverPhotoUrl: { type: String },
     owner: {
       type: mongoose.Types.ObjectId,
       ref: "User",
