@@ -65,7 +65,57 @@ const playlistTitleExist = async (req, res) => {
   }
 };
 
+const getAllPlaylist = async (req, res) => {
+  try {
+    const allPlaylist = await Playlist.find({}).sort({ createdAt: -1 });
+    return res.status(200).json({
+      status: 200,
+      message: "All Playlists fetched successfully",
+      playlists: allPlaylist,
+    });
+  } catch (error) {
+    console.log("Error: ", error);
+    return res.status(500).json({
+      status: 500,
+      message: "Error in fetching all playlist",
+      error: error?.message,
+    });
+  }
+};
+
+const getAllPlaylistOfUser = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    if (!userId) {
+      return res.status(403).json({ status: 403, message: "Bad Payload" });
+    }
+    const user = await User.find({ _id: userId });
+    if (!user) {
+      return res
+        .status(401)
+        .json({ status: 401, message: "UnAuthorized request" });
+    }
+    const allPlaylist = await Playlist.find({ users: { $in: [userId] } }).sort({
+      createdAt: -1,
+    });
+    return res.status(200).json({
+      status: 200,
+      message: "All Playlists fetched successfully",
+      playlists: allPlaylist,
+    });
+  } catch (error) {
+    console.log("Error: ", error);
+    return res.status(500).json({
+      status: 500,
+      message: "Error in fetching all playlist",
+      error: error?.message,
+    });
+  }
+};
+
 module.exports = {
   createPlaylist,
   playlistTitleExist,
+  getAllPlaylist,
+  getAllPlaylistOfUser,
 };
