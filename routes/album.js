@@ -1,6 +1,11 @@
 const express = require("express");
 const multer = require("multer");
-const { createAlbum, albumTitleExist } = require("../controller/album");
+const {
+  createAlbum,
+  albumTitleExist,
+  getAllAlbums,
+  getAllAlbumsOfUser,
+} = require("../controller/album");
 const { authenticateToken } = require("../middleware/auth");
 // Configure Multer for file upload
 const upload = multer({ dest: "uploads/" }); // Files are stored temporarily
@@ -14,5 +19,7 @@ router.post(
   createAlbum
 );
 router.get("/albumTitleExist", albumTitleExist);
+router.get("/getAllAlbums", getAllAlbums);
+router.get("/getAllAlbumsOfUser,", authenticateToken, getAllAlbumsOfUser);
 
 module.exports = router;

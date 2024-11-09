@@ -102,7 +102,57 @@ const createAlbum = async (req, res) => {
   }
 };
 
+const getAllAlbums = async (req, res) => {
+  try {
+    const allAlbums = await Album.find({}).sort({ createdAt: -1 });
+    return res.status(200).json({
+      status: 200,
+      message: "All Albums fetched successfully",
+      albums: allAlbums,
+    });
+  } catch (error) {
+    console.log("Error: ", error);
+    return res.status(500).json({
+      status: 500,
+      message: "Error in fetching all Albums",
+      error: error?.message,
+    });
+  }
+};
+
+const getAllAlbumsOfUser = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    if (!userId) {
+      return res.status(403).json({ status: 403, message: "Bad Payload" });
+    }
+    const user = await User.find({ _id: userId });
+    if (!user) {
+      return res
+        .status(401)
+        .json({ status: 401, message: "UnAuthorized request" });
+    }
+    const allAlbums = await Album.find({ users: { $in: [userId] } }).sort({
+      createdAt: -1,
+    });
+    return res.status(200).json({
+      status: 200,
+      message: "All Albums fetched successfully",
+      albums: allAlbums,
+    });
+  } catch (error) {
+    console.log("Error: ", error);
+    return res.status(500).json({
+      status: 500,
+      message: "Error in fetching all Albums",
+      error: error?.message,
+    });
+  }
+};
+
 module.exports = {
   createAlbum,
   albumTitleExist,
+  getAllAlbums,
+  getAllAlbumsOfUser,
 };
