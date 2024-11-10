@@ -16,6 +16,7 @@ const s3Client = new S3Client({
   },
 });
 
+//create song
 const uploadSong = async (req, res) => {
   console.log("req.file: ", req.file);
   console.log("req.files: ", req.files);
@@ -130,6 +131,25 @@ const uploadSong = async (req, res) => {
   }
 };
 
+const getAllSongs = async (req, res) => {
+  try {
+    const allSongs = await Song.find({}).sort({ createdAt: -1 });
+    return res.status(200).json({
+      status: 200,
+      message: "All Songs Fetched successfully",
+      songs: allSongs,
+    });
+  } catch (error) {
+    console.log("Error in fetching all songs: ", error);
+    return res.status(500).json({
+      status: 500,
+      message: "Error in fetching all Songs",
+      error: error?.message,
+    });
+  }
+};
+
 module.exports = {
   uploadSong,
+  getAllSongs,
 };

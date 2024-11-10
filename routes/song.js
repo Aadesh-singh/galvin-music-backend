@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
-const { uploadSong } = require("../controller/song");
+const { uploadSong, getAllSongs } = require("../controller/song");
 
 // Configure Multer for file upload
 const upload = multer({ dest: "uploads/" }); // Files are stored temporarily
@@ -14,5 +14,7 @@ router.post(
   ]),
   uploadSong
 );
+
+router.get("/getAllSongs", getAllSongs);
 
 module.exports = router;
