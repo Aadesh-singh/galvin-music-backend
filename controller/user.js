@@ -253,7 +253,7 @@ const updatePassword = async (req, res) => {
     console.log("body: ", req.body);
     const { token, newPassword } = req.body;
     const verified = await checkToken(token);
-    console.log("verified token: ", verified);
+    // console.log("verified token: ", verified);
     if (verified.id) {
       const hashedPassword = await bcrypt.hash(newPassword, 10);
 
@@ -284,7 +284,7 @@ const updatePassword = async (req, res) => {
 const fetchUserData = async (req, res) => {
   try {
     const userId = req.user.id;
-    console.log("userId", userId);
+    // console.log("userId", userId);
     const user = await User.findById(userId)
       .populate("albums")
       .populate("playlists")
@@ -293,7 +293,7 @@ const fetchUserData = async (req, res) => {
       .status(200)
       .json({ message: "User data fetched successfully", user: user });
   } catch (error) {
-    console.log("error in fetching user data", error);
+    console.log("Error in fetching user data", error);
     return res
       .status(200)
       .json({ message: "Error in fetching user data", error: error.message });
