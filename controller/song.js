@@ -18,7 +18,7 @@ const s3Client = new S3Client({
 
 //create song
 const uploadSong = async (req, res) => {
-  console.log("req.file: ", req.file);
+  // console.log("req.file: ", req.file);
   console.log("req.files: ", req.files);
   if (!req.files) {
     return res.status(400).send("No file uploaded");
@@ -26,7 +26,7 @@ const uploadSong = async (req, res) => {
   // 1. Get the song from multer
   // Read the uploaded file
   const songFile = req.files?.song?.[0]; // Path to the uploaded song
-  console.log("req.files: ", req.files);
+  // console.log("req.files: ", req.files);
   const coverPhotoFile = req.files?.coverPhoto?.[0];
   try {
     console.log("req.body: ", req.body);
@@ -72,6 +72,7 @@ const uploadSong = async (req, res) => {
 
     // Await the completion of the upload
     const s3Response = await uploadToS3.done();
+    console.log("------File upload done-------");
     console.log("s3 Reponse: ", s3Response);
     // 4. Get the public url of song
     console.log("s3 Reponse url: ", s3Response.Location);
@@ -105,7 +106,7 @@ const uploadSong = async (req, res) => {
       songObj.playlists = [playlist];
     }
 
-    console.log("SongObj: ", songObj);
+    // console.log("SongObj: ", songObj);
 
     const song = await Song.create(songObj);
     if (createUnder == "album") {
