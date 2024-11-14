@@ -95,9 +95,11 @@ const getAllPlaylistOfUser = async (req, res) => {
         .status(401)
         .json({ status: 401, message: "UnAuthorized request" });
     }
-    const allPlaylist = await Playlist.find({ users: { $in: [userId] } }).sort({
-      createdAt: -1,
-    });
+    const allPlaylist = await Playlist.find({ users: { $in: [userId] } })
+      .populate("owner", "firstName lastName")
+      .sort({
+        createdAt: -1,
+      });
     return res.status(200).json({
       status: 200,
       message: "All Playlists fetched successfully",
@@ -112,8 +114,6 @@ const getAllPlaylistOfUser = async (req, res) => {
     });
   }
 };
-
-
 
 module.exports = {
   createPlaylist,
