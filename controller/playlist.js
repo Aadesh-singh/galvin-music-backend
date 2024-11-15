@@ -102,7 +102,7 @@ const getAllPlaylistOfUser = async (req, res) => {
       });
     return res.status(200).json({
       status: 200,
-      message: "All Playlists fetched successfully",
+      message: "All Playlists fetched Successfully",
       playlists: allPlaylist,
     });
   } catch (error) {
