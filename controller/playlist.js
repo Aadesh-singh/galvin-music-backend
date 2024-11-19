@@ -70,14 +70,14 @@ const getAllPlaylist = async (req, res) => {
     const allPlaylist = await Playlist.find({}).sort({ createdAt: -1 });
     return res.status(200).json({
       status: 200,
-      message: "All Playlists fetched successfully",
+      message: "All Playlists Fetched Successfully",
       playlists: allPlaylist,
     });
   } catch (error) {
     console.log("Error: ", error);
     return res.status(500).json({
       status: 500,
-      message: "Error in fetching all playlist",
+      message: "Error in Fetching All Playlist",
       error: error?.message,
     });
   }
@@ -93,7 +93,7 @@ const getAllPlaylistOfUser = async (req, res) => {
     if (!user) {
       return res
         .status(401)
-        .json({ status: 401, message: "UnAuthorized request" });
+        .json({ status: 401, message: "UnAuthorized Request" });
     }
     const allPlaylist = await Playlist.find({ users: { $in: [userId] } })
       .populate("owner", "firstName lastName")
@@ -102,14 +102,14 @@ const getAllPlaylistOfUser = async (req, res) => {
       });
     return res.status(200).json({
       status: 200,
-      message: "All Playlists fetched Successfully",
+      message: "All Playlists Fetched Successfully",
       playlists: allPlaylist,
     });
   } catch (error) {
     console.log("Error: ", error);
     return res.status(500).json({
       status: 500,
-      message: "Error in fetching all playlist",
+      message: "Error in Fetching All Playlist",
       error: error?.message,
     });
   }
