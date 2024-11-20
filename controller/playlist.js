@@ -50,11 +50,11 @@ const playlistTitleExist = async (req, res) => {
     if (playlists.length > 0) {
       return res
         .status(200)
-        .json({ available: false, message: "Playlist name already exist" });
+        .json({ available: false, message: "Playlist name Already Exist" });
     } else {
       return res
         .status(200)
-        .json({ available: true, message: "Playlist name is available" });
+        .json({ available: true, message: "Playlist Name is Available" });
     }
   } catch (error) {
     console.log("Error in checking Playlist title: ", error);
