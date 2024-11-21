@@ -60,7 +60,7 @@ const playlistTitleExist = async (req, res) => {
     console.log("Error in checking Playlist title: ", error);
     return res.status(500).json({
       code: "SERVER_ERROR",
-      message: "Error in checking Playlist title",
+      message: "Error in Checking Playlist title",
     });
   }
 };
