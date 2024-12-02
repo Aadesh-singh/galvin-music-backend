@@ -67,7 +67,11 @@ const playlistTitleExist = async (req, res) => {
 
 const getAllPlaylist = async (req, res) => {
   try {
-    const allPlaylist = await Playlist.find({}).sort({ createdAt: -1 });
+    const { page, limit } = req.query;
+    const allPlaylist = await Playlist.find({})
+      .sort({ createdAt: -1 })
+      .skip(page * limit)
+      .limit(limit);
     return res.status(200).json({
       status: 200,
       message: "All Playlists Fetched Successfully",
