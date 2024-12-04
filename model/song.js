@@ -26,6 +26,10 @@ const songSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    type: {
+      type: String,
+      default: "song",
+    },
     coverPhotoUrl: { type: String },
     owner: {
       type: mongoose.Types.ObjectId,

@@ -38,6 +38,10 @@ const userSchema = new mongoose.Schema(
     profileUrl: {
       type: String,
     },
+    isArtist: {
+      type: Boolean,
+      default: false,
+    },
     accountType: {
       type: String,
       default: "default", //default for email and password

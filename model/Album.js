@@ -15,6 +15,10 @@ const AlbumSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    type: {
+      type: String,
+      default: "album",
+    },
     coverPhotoUrl: { type: String },
     users: [{ type: mongoose.Types.ObjectId, ref: "User" }],
     songs: [{ type: mongoose.Types.ObjectId, ref: "Song" }],

@@ -4,6 +4,7 @@ const authRoutes = require("./auth");
 const songRoutes = require("./song");
 const playlistRoutes = require("./playlist");
 const albumRoutes = require("./album");
+const artistRoutes = require("./artist");
 const { authenticateToken } = require("../middleware/auth");
 const router = express.Router();
 
@@ -26,5 +27,8 @@ router.use("/playlist", playlistRoutes);
 
 //Routes related to Albums
 router.use("/album", albumRoutes);
+
+//Routes related to Artists
+router.use("/artist", artistRoutes);
 
 module.exports = router;
