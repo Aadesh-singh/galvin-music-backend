@@ -2,7 +2,12 @@ const User = require("../model/user");
 
 const getAllArtists = async (req, res) => {
   try {
-    const artists = await User.find({ isArtist: true }); //Now only fetcing but need way to sort based on popularity.
+    let { page, limit } = req.query;
+    if (!page) page = 0;
+    if (!limit) limit = 10;
+    const artists = await User.find({ isArtist: true })
+      .skip(page * limit)
+      .limit(limit); //Now only fetcing but need way to sort based on popularity.
     return res.status(200).json({
       status: 200,
       message: "All Artists fetched successfully",
@@ -17,6 +22,13 @@ const getAllArtists = async (req, res) => {
     });
   }
 };
+
+// Additional fiuntion to run query
+// const misc = async () => {
+//   const mongoDB = await User.updateMany({}, { isArtist: true });
+//   console.log("done ", mongoDB);
+// };
+// misc();
 
 module.exports = {
   getAllArtists,

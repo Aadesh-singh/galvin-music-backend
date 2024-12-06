@@ -134,7 +134,11 @@ const uploadSong = async (req, res) => {
 
 const getAllSongs = async (req, res) => {
   try {
-    const allSongs = await Song.find({}).sort({ createdAt: -1 });
+    const { page, limit } = req.query;
+    const allSongs = await Song.find({})
+      .sort({ createdAt: -1 })
+      .skip(page * limit)
+      .limit(limit); //logic for trending pending
     return res.status(200).json({
       status: 200,
       message: "All Songs Fetched successfully",

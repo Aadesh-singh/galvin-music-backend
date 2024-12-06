@@ -20,7 +20,7 @@ router.post("/verifyToken", verifyToken);
 router.use("/auth", authRoutes);
 
 //Routes related to Songs
-router.use("/song", authenticateToken, songRoutes);
+router.use("/song", songRoutes);
 
 //Routes related to Playlists
 router.use("/playlist", playlistRoutes);
