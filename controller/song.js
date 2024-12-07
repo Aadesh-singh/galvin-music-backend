@@ -125,7 +125,7 @@ const uploadSong = async (req, res) => {
     fs.unlinkSync(songFile.path);
     return res.status(200).json({ message: "Song uploaded successfully" });
   } catch (error) {
-    console.log("Error in uploading a song", error);
+    console.log("Error in Uploading a song", error);
     return res
       .status(500)
       .json({ message: "Error in uploading song", code: "SERVER_ERR" });
