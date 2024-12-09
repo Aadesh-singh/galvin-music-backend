@@ -128,7 +128,7 @@ const uploadSong = async (req, res) => {
     console.log("Error in Uploading a song", error);
     return res
       .status(500)
-      .json({ message: "Error in Uploading song", code: "SERVER_ERR" });
+      .json({ message: "Error in Uploading Song", code: "SERVER_ERR" });
   }
 };
 
