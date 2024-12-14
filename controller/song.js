@@ -84,7 +84,7 @@ const uploadSong = async (req, res) => {
     if (coverPhotoFile) {
       const coverUploadParams = {
         Bucket: "galvinsongs",
-        Key: `cover/cover_${Date.now()}-${coverPhotoFile.originalname}`, // Use `cover/` prefix
+        Key: `cover/cover_${Date.now()}-${coverPhotoFile.originalname.trim()}`, // Use `cover/` prefix
         Body: fs.createReadStream(coverPhotoFile.path),
         ContentType: coverPhotoFile.mimetype,
       };
