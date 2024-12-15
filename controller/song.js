@@ -29,7 +29,7 @@ const uploadSong = async (req, res) => {
   // console.log("req.files: ", req.files);
   const coverPhotoFile = req.files?.coverPhoto?.[0];
   try {
-    console.log("req.body: ", req.body);
+    // console.log("req.body: ", req.body);
     const {
       name,
       lyricsby,
