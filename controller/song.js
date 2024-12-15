@@ -58,7 +58,7 @@ const uploadSong = async (req, res) => {
     // S3 upload parameters
     const uploadParams = {
       Bucket: "galvinsongs",
-      Key: `song_${Date.now()}-${songFile.originalname}`,
+      Key: `song_${Date.now()}-${songFile.originalname.trim()}`,
       Body: fileStream,
       ContentType: songFile.mimetype,
       //   ACL: "public-read",
