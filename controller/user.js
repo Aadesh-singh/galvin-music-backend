@@ -169,7 +169,7 @@ const googleLogin = async (req, res) => {
     // Find or create the user in your database
     const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
-      console.log("user not available");
+      // console.log("user not available");
       // user doesnot exist create a user
       const userObj = {
         firstName: payload.given_name,
