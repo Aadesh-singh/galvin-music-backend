@@ -1,11 +1,18 @@
 require("dotenv").config();
-const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3"); // Import S3Client and PutObjectCommand
+const {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+} = require("@aws-sdk/client-s3"); // Import S3Client and PutObjectCommand
 const { Upload } = require("@aws-sdk/lib-storage"); // For streaming uploads
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const fs = require("fs");
 const path = require("path");
 const Song = require("../model/song");
 const Album = require("../model/Album");
 const Playlist = require("../model/Playlist");
+const bucketName = process.env.AWS_BUCKET_NAME;
+const bucketAccessDuration = 3600;
 
 // AWS S3 v3 configuration (use S3Client)
 const s3Client = new S3Client({
@@ -15,6 +22,59 @@ const s3Client = new S3Client({
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   },
 });
+
+// Function to generate a pre-signed URL
+const generateSignedUrl = async (bucketName, key, expiresIn = 60) => {
+  const command = new GetObjectCommand({
+    Bucket: bucketName,
+    Key: key,
+  });
+
+  const signedUrl = await getSignedUrl(s3Client, command, { expiresIn });
+  return signedUrl;
+};
+
+// async function abc() {
+//   const spath =
+//     "song_1730906469260-02 Angreji Beat Ft. Gippy Grewal - Yo Yo Honey Singh.mp3";
+//   const url = await generateSignedUrl(bucketName, spath, 3600);
+//   console.log("SUrl: ", url);
+// }
+
+const fetchSong = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log(id);
+    if (!id) {
+      return res.status(500).json({
+        status: 400,
+        message: "Invalid request: Id not available",
+      });
+    }
+    let song = await Song.findById(id);
+
+    const playableUrl = await generateSignedUrl(
+      bucketName,
+      song.songKey,
+      bucketAccessDuration
+    );
+    const songData = song.toObject(); // Use `toJSON()` if needed
+    songData.playableUrl = playableUrl || "";
+    console.log(songData);
+    return res.status(200).json({
+      status: 200,
+      message: "Song fetched successfully",
+      song: songData,
+    });
+  } catch (error) {
+    console.log("Error in fetching song: ", error);
+    return res.status(500).json({
+      status: 500,
+      message: "Error in fetching song",
+      error: error.message,
+    });
+  }
+};
 
 //create song
 const uploadSong = async (req, res) => {
@@ -56,9 +116,10 @@ const uploadSong = async (req, res) => {
 
     // 3. Upload song on AWS S3
     // S3 upload parameters
+    let songKey = `song_${Date.now()}-${songFile.originalname.trim()}`;
     const uploadParams = {
       Bucket: "galvinsongs",
-      Key: `song_${Date.now()}-${songFile.originalname.trim()}`,
+      Key: songKey,
       Body: fileStream,
       ContentType: songFile.mimetype,
       //   ACL: "public-read",
@@ -78,13 +139,15 @@ const uploadSong = async (req, res) => {
     console.log("S3 Reponse url: ", s3Response.Location);
     const songUrl = s3Response.Location;
     songObj.songUrl = songUrl;
+    songObj.songKey = songKey;
     songObj.owner = req.user.id;
 
     // 3. Upload cover photo file to S3 (if available)
     if (coverPhotoFile) {
+      const coverKey = `cover/cover_${Date.now()}-${coverPhotoFile.originalname.trim()}`; // Use `cover/` prefix
       const coverUploadParams = {
         Bucket: "galvinsongs",
-        Key: `cover/cover_${Date.now()}-${coverPhotoFile.originalname.trim()}`, // Use `cover/` prefix
+        Key: coverKey,
         Body: fs.createReadStream(coverPhotoFile.path),
         ContentType: coverPhotoFile.mimetype,
       };
@@ -95,6 +158,7 @@ const uploadSong = async (req, res) => {
       });
       const coverS3Response = await coverUpload.done();
       songObj.coverPhotoUrl = coverS3Response.Location; // Add cover URL to the song object
+      songObj.coverKey = coverKey;
 
       // Clean up: Remove the local cover photo file
       fs.unlinkSync(coverPhotoFile.path);
@@ -157,4 +221,5 @@ const getAllSongs = async (req, res) => {
 module.exports = {
   uploadSong,
   getAllSongs,
+  fetchSong,
 };

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
-const { uploadSong, getAllSongs } = require("../controller/song");
+const { uploadSong, getAllSongs, fetchSong } = require("../controller/song");
 const { authenticateToken } = require("../middleware/auth");
 
 // Configure Multer for file upload
@@ -18,5 +18,6 @@ router.post(
 );
 
 router.get("/getAllSongs", getAllSongs);
+router.get("/fetchSong/:id", fetchSong);
 
 module.exports = router;
