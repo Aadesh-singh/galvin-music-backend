@@ -44,7 +44,7 @@ const generateSignedUrl = async (bucketName, key, expiresIn = 60) => {
 const fetchSong = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log(id);
+    // console.log(id);
     if (!id) {
       return res.status(500).json({
         status: 400,
@@ -63,7 +63,7 @@ const fetchSong = async (req, res) => {
     console.log(songData);
     return res.status(200).json({
       status: 200,
-      message: "Song fetched successfully",
+      message: "Song Fetched Successfully",
       song: songData,
     });
   } catch (error) {
