@@ -48,7 +48,7 @@ const fetchSong = async (req, res) => {
     if (!id) {
       return res.status(500).json({
         status: 400,
-        message: "Invalid request: Id not available",
+        message: "Invalid Request: Id not available",
       });
     }
     let song = await Song.findById(id);
