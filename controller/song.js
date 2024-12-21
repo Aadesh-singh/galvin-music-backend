@@ -79,7 +79,7 @@ const fetchSong = async (req, res) => {
 //create song
 const uploadSong = async (req, res) => {
   // console.log("req.file: ", req.file);
-  console.log("req.files: ", req.files);
+  // console.log("req.files: ", req.files);
   if (!req.files) {
     return res.status(400).send("No file uploaded");
   }
