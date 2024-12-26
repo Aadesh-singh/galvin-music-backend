@@ -136,7 +136,7 @@ const uploadSong = async (req, res) => {
     console.log("------File upload done-------");
     console.log("S3 Reponse: ", s3Response);
     // 4. Get the public url of song
-    console.log("S3 Reponse url: ", s3Response.Location);
+    console.log("S3 Reponse Url: ", s3Response.Location);
     const songUrl = s3Response.Location;
     songObj.songUrl = songUrl;
     songObj.songKey = songKey;
