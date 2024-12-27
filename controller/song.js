@@ -182,9 +182,6 @@ const uploadSong = async (req, res) => {
       );
     }
 
-    // 5. Destructure the Song Obj with public/avalilability url
-    // 6. Feed to MongoDB
-    // 7. Return success response.
     // Clean up: Remove the local file
     fs.unlinkSync(songFile.path);
     return res.status(200).json({ message: "Song uploaded successfully" });
