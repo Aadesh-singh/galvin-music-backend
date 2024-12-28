@@ -195,7 +195,7 @@ const googleLogin = async (req, res) => {
         .status(200)
         .json({ message: "User logged in successfully", token, user });
     } else if (!user.emailVerified) {
-      console.log("email not verified");
+      // console.log("email not verified");
       return res
         .status(401)
         .json({ code: "EMAIL_NOT_VERIFIED", message: "Email not verified" });
