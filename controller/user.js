@@ -243,7 +243,7 @@ const sendForgotPasswordLink = async (req, res) => {
     console.log("Error in sending verification email", err);
     return res.status(401).json({
       code: "SERVER_ERR",
-      message: "Error in sending verification email.",
+      message: "Error in Sending Verification Email.",
     });
   }
 };
