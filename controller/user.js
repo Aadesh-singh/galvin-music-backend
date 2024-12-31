@@ -250,7 +250,7 @@ const sendForgotPasswordLink = async (req, res) => {
 
 const updatePassword = async (req, res) => {
   try {
-    console.log("body: ", req.body);
+    // console.log("body: ", req.body);
     const { token, newPassword } = req.body;
     const verified = await checkToken(token);
     // console.log("verified token: ", verified);
